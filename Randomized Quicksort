@@ -1,0 +1,72 @@
+#include<bits/stdc++.h>
+#include<time.h>
+#include<unistd.h>
+#include<algorithm>
+using namespace std;
+
+
+int partition(long long int array[], long long int left,long long int right) {
+   long long int pivot = array[right];
+   long long int partitionIdx = left;
+  
+   for (long long int j = left; j < right; j++) {
+       if (array[j] < pivot) {
+           swap(array[partitionIdx], array[j]);
+           partitionIdx++;
+       }
+   }
+   swap(array[partitionIdx], array[right]);
+   return partitionIdx;
+}
+
+int partition_r(long long int array[], int left, int right)
+{
+   // Generate a random number in between
+   // left and  right
+   srand(time(NULL));
+   int random = left + rand() % (right - left);
+   // Swap A[random] with A[right]
+   swap(array[random], array[right]);
+   return partition(array,left, right);
+}
+void r_quickSort(long long int array[], long long int left, long long int right) {
+  
+   if (left < right){
+
+       long long int PIdx = partition_r(array, left, right);
+       r_quickSort(array, left, PIdx - 1);
+       r_quickSort(array, PIdx + 1, right);
+   }
+}
+
+
+int main() {
+   long long int inputSize[] = {10, 100, 1000, 10000, 100000, 1000000};
+   long double timeTaken[6];
+   clock_t begin,end;
+   long long int size;
+
+   long double avg;
+   for (int i=0; i<6; i++){
+       size = inputSize[i];
+       avg = 0;
+       long long int arr[size];
+       for (int test=0; test<10; test++){
+           for (int j=0; j<size; j++){
+               arr[j] = rand();
+           }
+           begin=clock();
+
+           r_quickSort(arr, 0, size-1);
+
+           end=clock();
+           avg += (long double)(end-begin)/CLOCKS_PER_SEC;
+
+       }
+       timeTaken[i] = avg/10;
+   }
+
+   for (int i=0; i<6; i++){
+       cout << timeTaken[i] << endl;
+   }
+}
